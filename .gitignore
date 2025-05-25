@@ -399,3 +399,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/src/Hcs.Server/appsettings.Development.json
+/src/Hcs.Server/appsettings.Production.json
