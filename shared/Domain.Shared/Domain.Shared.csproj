@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Ardalis.SmartEnum" />
+		<PackageReference Include="Ardalis.SmartEnum.SystemTextJson" />
+		<PackageReference Include="CSharpFunctionalExtensions" />
+		<PackageReference Include="ErrorOr" />
+		<PackageReference Include="NodaMoney" />
+		<PackageReference Include="NodaTime" />
+		<PackageReference Include="System.Text.Json" />
+		<PackageReference Include="Vogen" />
+	</ItemGroup>
+
+</Project>

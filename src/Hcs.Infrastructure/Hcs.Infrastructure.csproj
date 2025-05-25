@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Infrastructure.Shared\Infrastructure.Shared.csproj" />
+    <ProjectReference Include="..\Hcs.Application\Hcs.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="Database\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+</Project>

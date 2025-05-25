@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<AssemblyAttribute Include="Infrastructure.Shared.SystemInfo.ReleaseDate">
+			<_Parameter1>$([System.DateTime]::UtcNow.ToString("O"))</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Masstransit" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Application.Shared\Application.Shared.csproj" />
+	</ItemGroup>
+
+</Project>

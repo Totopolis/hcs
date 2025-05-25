@@ -1,13 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Scalar.AspNetCore" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\..\Hcs.Api\Hcs.Api.csproj" />
+		<ProjectReference Include="..\..\shared\Server.Shared\Server.Shared.csproj" />
+		<ProjectReference Include="..\Hcs.Infrastructure\Hcs.Infrastructure.csproj" />
+	</ItemGroup>
 </Project>
