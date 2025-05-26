@@ -67,6 +67,8 @@ public sealed class ArticleContent : ValueObject
         yield return Description;
         yield return Toc;
         yield return Content;
-        yield return Tags.Aggregate((l, r) => l + ";" + r);
+        yield return !Tags.Any() ?
+            string.Empty :
+            Tags.Aggregate((l, r) => l + ";" + r);
     }
 }

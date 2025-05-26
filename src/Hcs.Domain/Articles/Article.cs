@@ -27,6 +27,10 @@ public sealed class Article : AggregateRoot<ArticleId>
 
     public DateTimeOffset Created { get; init; }
 
+    public IReadOnlyList<ArticleDraft> Drafts => _drafts.AsReadOnly();
+
+    public IReadOnlyList<ArticleRelease> Releases => _release.AsReadOnly();
+
     // TODO: comments support
     public static Article Create(
         Cabin cabin,
