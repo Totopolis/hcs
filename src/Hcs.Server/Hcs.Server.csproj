@@ -5,8 +5,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Hcs.Api\Hcs.Api.csproj" />
+		<ProjectReference Include="..\Hcs.Api\Hcs.Api.csproj" />
 		<ProjectReference Include="..\..\shared\Server.Shared\Server.Shared.csproj" />
+		<ProjectReference Include="..\Hcs.Api\Hcs.Api.csproj" />
 		<ProjectReference Include="..\Hcs.Infrastructure\Hcs.Infrastructure.csproj" />
 	</ItemGroup>
 </Project>

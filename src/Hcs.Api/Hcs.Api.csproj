@@ -5,6 +5,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\src\Hcs.Application\Hcs.Application.csproj" />
+		<ProjectReference Include="..\Hcs.Contracts\Hcs.Contracts.csproj" />
+		<ProjectReference Include="..\Hcs.Application\Hcs.Application.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="ErrorOr" />
+		<PackageReference Include="MediatR.Contracts" />
+		<PackageReference Include="NodaTime" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\shared\Leaks\Leaks.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -5,6 +5,8 @@ namespace Hcs.Domain.Abstractions;
 
 public interface IArticleRepository
 {
+    void Add(Article article);
+
     Task<Article?> Get(ArticleId id, CancellationToken ct);
 
     Task<IEnumerable<Article>> GetAllWithoutContent(CabinId cabinId, CancellationToken ct);
