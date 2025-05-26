@@ -8,6 +8,8 @@ namespace Hcs.Domain.Articles;
 
 public sealed class Article : AggregateRoot<ArticleId>
 {
+    public const string DefaultTitle = "No Content";
+
     private readonly List<ArticleDraft> _drafts = new();
     private readonly List<ArticleRelease> _release = new();
 
@@ -26,6 +28,8 @@ public sealed class Article : AggregateRoot<ArticleId>
     public bool DraftSupport { get; init; }
 
     public DateTimeOffset Created { get; init; }
+
+    public string Title { get; private set; } = DefaultTitle;
 
     public IReadOnlyList<ArticleDraft> Drafts => _drafts.AsReadOnly();
 
@@ -48,7 +52,8 @@ public sealed class Article : AggregateRoot<ArticleId>
             OriginalLocale = originalLocale,
             MultiLangSupport = multiLangSupport,
             DraftSupport = draftSupport,
-            Created = now
+            Created = now,
+            Title = DefaultTitle
         };
     }
 
@@ -60,6 +65,11 @@ public sealed class Article : AggregateRoot<ArticleId>
         if (!MultiLangSupport && locale != OriginalLocale)
         {
             return DomainErrors.BadLocale;
+        }
+
+        if (OriginalLocale == locale)
+        {
+            Title = content.ShortTitle;
         }
 
         if (DraftSupport)
