@@ -21,6 +21,26 @@ public static class ServiceExtensions
         return services;
     }
 
+    public static IServiceCollection AddHcsAuthorization(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(
+                Constants.AllAuthenticsPolicy,
+                policy => policy.RequireRole("regular-role"));
+
+            options.AddPolicy(
+                Constants.KeeperAndRegularPolicy,
+                policy => policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole("keeper-role"));
+        });
+
+        return services;
+    }
+
     public static T ValueOrThrow<T>(
         this IErrorOr<T> errorOr,
         [CallerMemberName] string memberName = "",

@@ -6,9 +6,13 @@ using Hcs.Application;
 using Hcs.Infrastructure;
 using Hcs.Server.Settings;
 using Infrastructure.Shared;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Server.Shared;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace Hcs.Server;
 
@@ -66,6 +70,8 @@ internal static class Boot
             });
         }
 
+        SetupAuth(builder, startupSettings);
+
         builder.Services
             .AddSingleton<TimeProvider>(x => TimeProvider.System);
 
@@ -95,9 +101,105 @@ internal static class Boot
         builder.Services.AddApiServices(builder.Configuration);
     }
 
+    private static void SetupAuth(
+        WebApplicationBuilder builder,
+        StartupSettings settings)
+    {
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.Authority = settings.Keycloak.Authority;
+            // options.Audience = settings.Keycloak.Audience;
+            options.RequireHttpsMetadata = settings.Keycloak.RequireHttpsMetadata;
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                // Keycloak Client Scope Mapping if other clients used (api+insomna)
+                // Or use both audiences
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = settings.Keycloak.Authority,
+                ValidAudiences = settings.Keycloak.Audiences,
+                ClockSkew = TimeSpan.Zero,
+                RoleClaimType = ClaimTypes.Role
+            };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    // TODO: log it as warning
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    // Additional token validation
+                    var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+                    if (claimsIdentity != null)
+                    {
+                        // Extract from realm_access and add as standart role claims
+                        var realmAccessClaim = claimsIdentity.FindFirst("realm_access")?.Value;
+                        if (!string.IsNullOrEmpty(realmAccessClaim))
+                        {
+                            try
+                            {
+                                var realmAccess = JsonSerializer.Deserialize<JsonElement>(realmAccessClaim);
+                                if (realmAccess.TryGetProperty("roles", out var roles))
+                                {
+                                    foreach (var role in roles.EnumerateArray())
+                                    {
+                                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.GetString()!));
+                                    }
+                                }
+                            }
+                            catch (JsonException ex)
+                            {
+                                Console.WriteLine($"Error parsing realm_access: {ex.Message}");
+                            }
+                        }
+
+                        // Extract from resource_access if need
+                        var resourceAccessClaim = claimsIdentity.FindFirst("resource_access")?.Value;
+                        if (!string.IsNullOrEmpty(resourceAccessClaim))
+                        {
+                            try
+                            {
+                                var resourceAccess = JsonSerializer.Deserialize<JsonElement>(resourceAccessClaim);
+                                var clientId = settings.Keycloak.ClientId;
+                                if (resourceAccess.TryGetProperty(clientId!, out var clientAccess) &&
+                                    clientAccess.TryGetProperty("roles", out var clientRoles))
+                                {
+                                    foreach (var role in clientRoles.EnumerateArray())
+                                    {
+                                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.GetString()!));
+                                    }
+                                }
+                            }
+                            catch (JsonException ex)
+                            {
+                                Console.WriteLine($"Error parsing resource_access: {ex.Message}");
+                            }
+                        }
+
+                        // Console.WriteLine($"User authenticated: {claimsIdentity.Name}");
+                        // Console.WriteLine($"Roles: {string.Join(", ", claimsIdentity.FindAll(ClaimTypes.Role).Select(c => c.Value))}");
+                    }
+                    return Task.CompletedTask;
+                }
+            };
+        });
+
+        builder.Services.AddHcsAuthorization(builder.Configuration);
+    }
+
     public static Task PostBuild(this WebApplication app)
     {
-        // TODO: use pipeline-class for each functions
         app.UseFastEndpoints()
            .UseHcsExceptionHandler();
 
@@ -127,6 +229,9 @@ internal static class Boot
         {
             app.UseCors(CorsPolicyName);
         }
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         return Task.CompletedTask;
     }

@@ -8,4 +8,8 @@
 		<ProjectReference Include="..\Hcs.Contracts\Hcs.Contracts.csproj" />
 		<ProjectReference Include="..\Hcs.Application\Hcs.Application.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Keeper\" />
+	</ItemGroup>
 </Project>

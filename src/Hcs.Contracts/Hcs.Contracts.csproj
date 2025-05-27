@@ -10,4 +10,8 @@
 		<ProjectReference Include="..\..\shared\Leaks\Leaks.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="GetAllReleased\" />
+	</ItemGroup>
+
 </Project>
